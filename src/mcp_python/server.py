@@ -9,6 +9,20 @@ import mcp.server.stdio
 import mcp.types as types
 from mcp_python.repl import ReplProcess
 import json
+from pydantic import AnyUrl
+from pathlib import Path
+
+
+fixed_resources = {
+    "examples/input.md": {
+        "name": "Input Example",
+        "description": "An example of sending user input to a REPL session.",
+    },
+    "examples/variables.md": {
+        "name": "Variables Example",
+        "description": "An example of using peristent variables in a Python REPL session.",
+    }
+}
 
 class PythonREPLServer:
     def __init__(self):
@@ -28,6 +42,13 @@ class PythonREPLServer:
         async def handle_call_tool(name: str, arguments: dict | None) -> list[types.TextContent | types.ImageContent | types.EmbeddedResource]:
             return await self.handle_call_tool(name, arguments)
         
+        @self.server.list_resources()
+        async def handle_list_resources() -> list[types.Resource]:
+            return await self.handle_list_resources()
+        
+        @self.server.read_resource()
+        async def handle_read_resource(uri: AnyUrl) -> str:
+            return await self.handle_read_resource(uri)
         
     async def handle_list_tools(self) -> list[types.Tool]:
         """List available tools"""
@@ -274,6 +295,30 @@ class PythonREPLServer:
                 ]
         else:
             raise ValueError(f"Unknown tool: {name}")
+        
+    async def handle_list_resources(self) -> list[types.Resource]:
+        return [
+            types.Resource(
+                uri=AnyUrl(f"file://{key}"),
+                name=fixed_resources[key]["name"],
+                description=fixed_resources[key]["description"],
+                mimeType="text/plain",
+            )
+            for key in fixed_resources.keys()
+        ]
+    
+    async def handle_read_resource(self, uri: AnyUrl) -> str:
+        if not uri:
+            raise ValueError("Missing resource_name parameter")
+        if uri.scheme != "file":
+            raise ValueError(f"Unsupported URI scheme: {uri.scheme}")
+        resource_name = str(uri).replace("file://", "")
+        if resource_name in list(fixed_resources.keys()):
+            file_path = Path(__file__).resolve().parent / resource_name
+            with open(file_path, "r") as file:
+                return file.read()
+        else:
+            return "Resource not found."
     
     async def run(self):
         """Run the server"""
