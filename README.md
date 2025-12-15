@@ -2,6 +2,10 @@
 
 This MCP server provides a Python REPL (Read-Eval-Print Loop) as a tool. It allows execution of Python code through the MCP protocol with a persistent session.
 
+<a href="https://glama.ai/mcp/servers/jsorljnhdl">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/jsorljnhdl/badge" alt="Python REPL Server MCP server" />
+</a>
+
 ## Setup
 
 No setup needed! The project uses `uv` for dependency management.
