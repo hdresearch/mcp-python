@@ -8,14 +8,19 @@ This MCP server provides a Python REPL (Read-Eval-Print Loop) as a tool. It allo
 
 ## Setup
 
-No setup needed! The project uses `uv` for dependency management.
-
+### Prerequisites
+- Install `uv` if you haven't already
+- Clone this repository
+```bash
+git clone https://github.com/hdresearch/mcp-python
+```
 ## Running the Server
 
 Simply run:
 
 ```bash
-uv run src/python_repl/server.py
+cd mcp-python
+uv run src/mcp_python/server.py
 ```
 
 ## Usage with Claude Desktop
@@ -29,7 +34,7 @@ Add this configuration to your Claude Desktop config file:
       "command": "uv",
       "args": [
         "--directory",
-        "/absolute/path/to/python-repl-server",
+        "/absolute/path/to/mcp-python",
         "run",
         "mcp_python"
       ]
@@ -37,6 +42,10 @@ Add this configuration to your Claude Desktop config file:
   }
 }
 ```
+
+- `/absolute/path/to/mcp-python` might look like `/Users/hdresearch/repos/mcp-python`
+- if `mcp_python` is not working, substitute with `src/mcp_python/server.py`
+
 
 The server provides three tools:
 
